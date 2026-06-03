@@ -1,0 +1,10 @@
+{
+  "model_name": "Random Forest",
+  "features": [
+    "visual",
+    "auditory",
+    "kinesthetic"
+  ],
+  "test_accuracy": 0.9717514124293786,
+  "cv_accuracy": 0.951661600810537
+}
