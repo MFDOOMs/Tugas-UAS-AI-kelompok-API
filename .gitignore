@@ -1,0 +1,7 @@
+.venv/
+.deps/
+.runtime-deps/
+__pycache__/
+*.pyc
+server.log
+.ipynb_checkpoints/

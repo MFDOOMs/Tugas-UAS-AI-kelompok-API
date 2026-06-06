@@ -6,6 +6,7 @@ const recommendationText = document.querySelector("#recommendationText");
 const sourceBadge = document.querySelector("#sourceBadge");
 const statusText = document.querySelector("#statusText");
 const downloadBtn = document.querySelector("#downloadBtn");
+const profilePdfBtn = document.querySelector("#profilePdfBtn");
 
 const scoreFields = {
     visual: document.querySelector("#visualScore"),
@@ -18,23 +19,23 @@ const apiUrl = window.location.protocol === "file:"
     : `${window.location.origin}/predict`;
 
 const scaleLabels = {
-    1: "Tidak setuju",
-    2: "Kurang",
-    3: "Netral",
-    4: "Setuju",
-    5: "Sangat setuju",
+    1: "Strongly disagree",
+    2: "Disagree",
+    3: "Neutral",
+    4: "Agree",
+    5: "Strongly agree",
 };
 
 const descriptions = {
-    Visual: "Kamu cenderung lebih efektif memahami informasi lewat tampilan visual seperti diagram, peta konsep, warna, gambar, dan susunan catatan yang rapi.",
-    Auditory: "Kamu cenderung lebih efektif memahami informasi lewat suara, diskusi, penjelasan lisan, dan proses menjelaskan ulang materi.",
-    Kinesthetic: "Kamu cenderung lebih efektif memahami informasi lewat praktik langsung, simulasi, eksperimen, latihan, dan pengalaman nyata.",
+    Visual: "Your responses indicate a stronger tendency toward visual and reading-based learning, where written material, diagrams, and visible structure support understanding.",
+    Auditory: "Your responses indicate a stronger tendency toward auditory learning, where spoken explanation, listening, and discussion support understanding.",
+    Kinesthetic: "Your responses indicate a stronger tendency toward kinesthetic learning, where direct practice, experiments, movement, and hands-on activities support understanding.",
 };
 
 const recommendations = {
-    Visual: "Gunakan mind map, tabel ringkas, highlighter, diagram alur, dan rangkuman visual. Saat belajar, ubah materi panjang menjadi skema agar pola informasinya lebih mudah terlihat.",
-    Auditory: "Belajar dengan diskusi, rekaman suara, membaca materi dengan lantang, atau menjelaskan ulang konsep kepada teman. Gunakan video pembelajaran yang memiliki narasi jelas.",
-    Kinesthetic: "Perbanyak latihan soal, studi kasus, eksperimen kecil, role-play, dan simulasi. Pecah materi menjadi aktivitas singkat agar proses belajar terasa lebih konkret.",
+    Visual: "Use structured notes, diagrams, mind maps, reading summaries, highlighted keywords, and visual organizers to make information easier to scan and remember.",
+    Auditory: "Use discussion, verbal explanation, recorded summaries, lecture-based material, and teach-back sessions to strengthen recall and understanding.",
+    Kinesthetic: "Use practice tasks, experiments, simulations, role-playing, case studies, and project-based activities to make concepts more concrete.",
 };
 
 document.querySelectorAll(".scale").forEach((scale) => {
@@ -82,16 +83,16 @@ function collectScores() {
 function setLoading(isLoading) {
     const submitButton = form.querySelector("button[type='submit']");
     submitButton.disabled = isLoading;
-    submitButton.textContent = isLoading ? "Memproses..." : "Prediksi Gaya Belajar";
+    submitButton.textContent = isLoading ? "Processing..." : "Predict Learning Style";
 }
 
 function renderResult(data) {
-    const prediction = data.prediction || "Tidak diketahui";
+    const prediction = data.prediction || "Unknown";
     const scores = data.scores || collectScores();
 
     predictionTitle.textContent = prediction;
-    predictionDescription.textContent = descriptions[prediction] || "Sistem berhasil membuat prediksi berdasarkan skor kuesioner yang dikirim ke API.";
-    recommendationText.textContent = recommendations[prediction] || "Gunakan kombinasi metode belajar visual, auditory, dan kinesthetic sesuai kebutuhan materi.";
+    predictionDescription.textContent = descriptions[prediction] || "The system successfully generated a prediction from the questionnaire scores sent to the API.";
+    recommendationText.textContent = recommendations[prediction] || "Use a balanced mix of visual, auditory, and kinesthetic learning strategies based on the learning material.";
 
     scoreFields.visual.textContent = Number(scores.visual).toFixed(2);
     scoreFields.auditory.textContent = Number(scores.auditory).toFixed(2);
@@ -99,6 +100,11 @@ function renderResult(data) {
 
     sourceBadge.textContent = data.source === "machine_learning_model" ? "ML Model" : "Fallback";
     sourceBadge.style.background = data.source === "machine_learning_model" ? "#2f9e44" : "#c47f18";
+
+    const profileUrl = data.profile_pdf_url || `/profile-pdf/${prediction.toLowerCase()}`;
+    profilePdfBtn.href = profileUrl;
+    profilePdfBtn.download = `${prediction} Profile.pdf`;
+    profilePdfBtn.textContent = `Download ${prediction} Profile PDF`;
 
     resultSection.classList.remove("hidden");
     resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -122,7 +128,7 @@ form.addEventListener("submit", async (event) => {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.detail || "API gagal memproses prediksi.");
+            throw new Error(data.detail || "The API failed to process the prediction.");
         }
 
         renderResult(data);
@@ -130,7 +136,7 @@ form.addEventListener("submit", async (event) => {
         if (data.message) {
             statusText.textContent = data.message;
         } else {
-            statusText.textContent = "Prediksi berhasil dibuat oleh API.";
+            statusText.textContent = "Prediction generated successfully by the API.";
         }
     } catch (error) {
         statusText.textContent = `Error: ${error.message}`;
