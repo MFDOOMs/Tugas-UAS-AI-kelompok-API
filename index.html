@@ -47,8 +47,8 @@
             </article>
             <article class="method-card">
                 <span>Output</span>
-                <strong>Prediction and profile PDF</strong>
-                <p>The trained model returns a learning style, probability breakdown, recommendations, and a downloadable profile PDF.</p>
+                <strong>Validated prediction and profile PDF</strong>
+                <p>The trained model returns a learning style only after the validation layer checks for unclear or anomalous response patterns.</p>
             </article>
         </section>
 
@@ -154,6 +154,12 @@
                         <strong id="confidenceValue">-</strong>
                     </div>
                     <p id="confidenceNote">Confidence is calculated from the model probability for the predicted class when available.</p>
+                </div>
+
+                <div id="anomalyPanel" class="anomaly-panel hidden">
+                    <h3>Response Pattern Review</h3>
+                    <p>This submission needs review before the system can generate a final learning profile.</p>
+                    <ul id="anomalyList"></ul>
                 </div>
 
                 <div class="score-grid">

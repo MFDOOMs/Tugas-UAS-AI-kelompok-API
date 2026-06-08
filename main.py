@@ -45,9 +45,13 @@ _model_loaded_from: Path | None = None
 
 
 class ScorePayload(BaseModel):
-    visual: float = Field(..., ge=0, description="Average Visual score")
-    auditory: float = Field(..., ge=0, description="Average Auditory score")
-    kinesthetic: float = Field(..., ge=0, description="Average Kinesthetic score")
+    visual: float = Field(..., ge=1, le=5, description="Average Visual score")
+    auditory: float = Field(..., ge=1, le=5, description="Average Auditory score")
+    kinesthetic: float = Field(..., ge=1, le=5, description="Average Kinesthetic score")
+    answers: dict[str, int] | None = Field(
+        default=None,
+        description="Raw questionnaire answers keyed by question id, for response-pattern validation.",
+    )
 
 
 def load_model() -> Any | None:
@@ -70,9 +74,102 @@ def load_model() -> Any | None:
 
 
 def score_dict(scores: ScorePayload) -> dict[str, float]:
-    if hasattr(scores, "model_dump"):
-        return scores.model_dump()
-    return scores.dict()
+    return {
+        "visual": round(float(scores.visual), 3),
+        "auditory": round(float(scores.auditory), 3),
+        "kinesthetic": round(float(scores.kinesthetic), 3),
+    }
+
+
+def answer_values(scores: ScorePayload) -> list[int]:
+    if not scores.answers:
+        return []
+    return [int(value) for value in scores.answers.values() if 1 <= int(value) <= 5]
+
+
+def dominant_score(scores: ScorePayload) -> tuple[str, float]:
+    score_map = {
+        "Visual": float(scores.visual),
+        "Auditory": float(scores.auditory),
+        "Kinesthetic": float(scores.kinesthetic),
+    }
+    label = max(score_map, key=score_map.get)
+    return label, score_map[label]
+
+
+def detect_pre_prediction_anomalies(scores: ScorePayload) -> list[str]:
+    anomalies: list[str] = []
+    score_values = list(score_dict(scores).values())
+    score_spread = max(score_values) - min(score_values)
+    values = answer_values(scores)
+
+    if values:
+        answer_counts = {value: values.count(value) for value in set(values)}
+        most_repeated = max(answer_counts.values())
+        mean = sum(values) / len(values)
+        variance = sum((value - mean) ** 2 for value in values) / len(values)
+        standard_deviation = variance ** 0.5
+
+        if len(set(values)) == 1:
+            anomalies.append(
+                "All questionnaire items received the same score, so the response pattern is not reliable enough for classification."
+            )
+        elif most_repeated >= 12:
+            anomalies.append(
+                "Most questionnaire items received the same score, which may indicate straight-line answering."
+            )
+
+        if standard_deviation < 0.55:
+            anomalies.append(
+                "The answers have very low variation, so the model cannot read a clear learning preference pattern."
+            )
+
+    if score_spread < 0.35:
+        anomalies.append(
+            "Visual, Auditory, and Kinesthetic scores are too close to each other, so the result is considered inconclusive."
+        )
+
+    return list(dict.fromkeys(anomalies))
+
+
+def detect_prediction_conflict(scores: ScorePayload, prediction: str) -> list[str]:
+    score_map = {
+        "Visual": float(scores.visual),
+        "Auditory": float(scores.auditory),
+        "Kinesthetic": float(scores.kinesthetic),
+    }
+    dominant_label, dominant_value = dominant_score(scores)
+    predicted_score = score_map.get(prediction)
+
+    if predicted_score is None:
+        return []
+
+    if dominant_label != prediction and dominant_value - predicted_score >= 0.8:
+        return [
+            f"The model predicted {prediction}, but the strongest questionnaire score is {dominant_label}. This conflict is flagged for review instead of producing a final profile."
+        ]
+
+    return []
+
+
+def inconclusive_response(
+    scores: ScorePayload,
+    anomalies: list[str],
+    probabilities: dict[str, float] | None = None,
+) -> dict[str, Any]:
+    response: dict[str, Any] = {
+        "prediction": "Inconclusive",
+        "scores": score_dict(scores),
+        "source": "validation_layer",
+        "profile_pdf_url": None,
+        "anomalies": anomalies,
+        "message": "The response pattern needs review before a reliable learning profile can be generated.",
+    }
+
+    if probabilities:
+        response["probabilities"] = probabilities
+
+    return response
 
 
 def normalize_prediction(raw_prediction: Any) -> str:
@@ -139,6 +236,10 @@ def download_profile_pdf(learning_style: str) -> FileResponse:
 def predict_learning_style(scores: ScorePayload) -> dict[str, Any]:
     model = load_model()
     input_values = [[scores.visual, scores.auditory, scores.kinesthetic]]
+    anomalies = detect_pre_prediction_anomalies(scores)
+
+    if anomalies:
+        return inconclusive_response(scores, anomalies)
 
     if model is None:
         prediction = fallback_prediction(scores)
@@ -168,6 +269,10 @@ def predict_learning_style(scores: ScorePayload) -> dict[str, Any]:
                 normalize_prediction([label]): round(float(prob), 4)
                 for label, prob in zip(classes, probabilities)
             }
+
+        conflicts = detect_prediction_conflict(scores, prediction)
+        if conflicts:
+            return inconclusive_response(scores, conflicts, response.get("probabilities"))
 
         return response
     except Exception as exc:

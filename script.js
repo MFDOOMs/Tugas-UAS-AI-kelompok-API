@@ -11,6 +11,8 @@ const confidenceNote = document.querySelector("#confidenceNote");
 const strengthList = document.querySelector("#strengthList");
 const watchoutList = document.querySelector("#watchoutList");
 const activityList = document.querySelector("#activityList");
+const anomalyPanel = document.querySelector("#anomalyPanel");
+const anomalyList = document.querySelector("#anomalyList");
 
 const scoreFields = {
     visual: document.querySelector("#visualScore"),
@@ -46,12 +48,14 @@ const descriptions = {
     Visual: "Your responses indicate a stronger tendency toward visual and reading-based learning, where written material, diagrams, and visible structure support understanding.",
     Auditory: "Your responses indicate a stronger tendency toward auditory learning, where spoken explanation, listening, and discussion support understanding.",
     Kinesthetic: "Your responses indicate a stronger tendency toward kinesthetic learning, where direct practice, experiments, movement, and hands-on activities support understanding.",
+    Inconclusive: "The system found an unusual or unclear response pattern, so it does not generate a final learning-style label for this submission.",
 };
 
 const recommendations = {
     Visual: "Use structured notes, diagrams, mind maps, reading summaries, highlighted keywords, and visual organizers to make information easier to scan and remember.",
     Auditory: "Use discussion, verbal explanation, recorded summaries, lecture-based material, and teach-back sessions to strengthen recall and understanding.",
     Kinesthetic: "Use practice tasks, experiments, simulations, role-playing, case studies, and project-based activities to make concepts more concrete.",
+    Inconclusive: "Review the answers and retake the questionnaire with more deliberate responses. A reliable profile needs enough variation and a clear preference pattern.",
 };
 
 const insightContent = {
@@ -106,6 +110,21 @@ const insightContent = {
             "Take active breaks and return with a concrete problem to solve.",
         ],
     },
+    Inconclusive: {
+        strengths: [
+            "The system avoids forcing a profile when the answer pattern is unclear.",
+            "The validation step helps reduce misleading reports from careless submissions.",
+        ],
+        watchouts: [
+            "Repeating the same score across many items weakens the prediction.",
+            "Very similar VAK scores may mean the profile is balanced or the input needs review.",
+        ],
+        activities: [
+            "Retake the questionnaire and answer each statement based on actual learning habits.",
+            "Avoid choosing the same score automatically for every item.",
+            "Use the result only after the validation warning disappears.",
+        ],
+    },
 };
 
 document.querySelectorAll(".scale").forEach((scale) => {
@@ -150,6 +169,19 @@ function collectScores() {
     };
 }
 
+function collectAnswers() {
+    const answers = {};
+
+    document.querySelectorAll(".scale").forEach((scale) => {
+        const checked = scale.querySelector("input:checked");
+        if (!checked) return;
+
+        answers[scale.dataset.question] = Number(checked.value);
+    });
+
+    return answers;
+}
+
 function setLoading(isLoading) {
     const submitButton = form.querySelector("button[type='submit']");
     submitButton.disabled = isLoading;
@@ -170,11 +202,29 @@ function renderList(listElement, items) {
     });
 }
 
+function renderAnomalies(anomalies) {
+    anomalyList.innerHTML = "";
+
+    if (!anomalies || anomalies.length === 0) {
+        anomalyPanel.classList.add("hidden");
+        return;
+    }
+
+    anomalies.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        anomalyList.appendChild(li);
+    });
+
+    anomalyPanel.classList.remove("hidden");
+}
+
 function renderResult(data) {
     const prediction = data.prediction || "Unknown";
     const scores = data.scores || collectScores();
     const probabilities = data.probabilities || {};
     const predictedProbability = probabilities[prediction];
+    const isInconclusive = prediction === "Inconclusive" || data.source === "validation_layer";
     const insights = insightContent[prediction] || {
         strengths: ["Shows a balanced pattern across the questionnaire."],
         watchouts: ["Interpret the result as guidance rather than a fixed label."],
@@ -198,21 +248,38 @@ function renderResult(data) {
     probabilityFields.Kinesthetic.textContent = percentage(probabilities.Kinesthetic);
 
     confidenceValue.textContent = percentage(predictedProbability);
-    confidenceNote.textContent = predictedProbability === undefined
+    confidenceNote.textContent = isInconclusive
+        ? "Confidence is not shown because the validation layer blocked the result from becoming a final profile."
+        : predictedProbability === undefined
         ? "This model response did not include probability values, so only the predicted class is shown."
         : `This value is the model probability for the predicted ${prediction} class.`;
 
     renderList(strengthList, insights.strengths);
     renderList(watchoutList, insights.watchouts);
     renderList(activityList, insights.activities);
+    renderAnomalies(data.anomalies || []);
 
-    sourceBadge.textContent = data.source === "machine_learning_model" ? "ML Model" : "Fallback";
-    sourceBadge.style.background = data.source === "machine_learning_model" ? "#2f9e44" : "#c47f18";
+    if (data.source === "machine_learning_model") {
+        sourceBadge.textContent = "ML Model";
+        sourceBadge.style.background = "#2f9e44";
+    } else if (data.source === "validation_layer") {
+        sourceBadge.textContent = "Needs Review";
+        sourceBadge.style.background = "#b42318";
+    } else {
+        sourceBadge.textContent = "Fallback";
+        sourceBadge.style.background = "#c47f18";
+    }
 
-    const profileUrl = data.profile_pdf_url || `/profile-pdf/${prediction.toLowerCase()}`;
-    profilePdfBtn.href = profileUrl;
-    profilePdfBtn.download = `${prediction} Profile.pdf`;
-    profilePdfBtn.textContent = `Download ${prediction} Profile PDF`;
+    if (isInconclusive || !data.profile_pdf_url) {
+        profilePdfBtn.classList.add("hidden");
+        profilePdfBtn.removeAttribute("href");
+        profilePdfBtn.removeAttribute("download");
+    } else {
+        profilePdfBtn.classList.remove("hidden");
+        profilePdfBtn.href = data.profile_pdf_url;
+        profilePdfBtn.download = `${prediction} Profile.pdf`;
+        profilePdfBtn.textContent = `Download ${prediction} Profile PDF`;
+    }
 
     resultSection.classList.remove("hidden");
     resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -225,12 +292,13 @@ form.addEventListener("submit", async (event) => {
 
     try {
         const scores = collectScores();
+        const answers = collectAnswers();
         const response = await fetch(apiUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(scores),
+            body: JSON.stringify({ ...scores, answers }),
         });
 
         const data = await response.json();
@@ -255,5 +323,6 @@ form.addEventListener("submit", async (event) => {
 
 form.addEventListener("reset", () => {
     resultSection.classList.add("hidden");
+    anomalyPanel.classList.add("hidden");
     statusText.textContent = "";
 });
