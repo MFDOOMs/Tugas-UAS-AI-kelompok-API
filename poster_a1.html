@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A1 Poster - AI-Based Learning Style Report</title>
+    <style>
+        body {
+            margin: 0;
+            background: #d9e1ea;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 12px 18px;
+            color: #ffffff;
+            background: #0f2a43;
+        }
+
+        .toolbar a,
+        .toolbar button {
+            border: 0;
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: #0f2a43;
+            background: #ffffff;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .stage {
+            width: min(100vw - 32px, 980px);
+            margin: 24px auto;
+            box-shadow: 0 20px 60px rgba(15, 42, 67, 0.25);
+            background: #ffffff;
+        }
+
+        .stage img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        @media print {
+            @page {
+                size: A1 portrait;
+                margin: 0;
+            }
+
+            .toolbar {
+                display: none;
+            }
+
+            .stage {
+                width: 594mm;
+                margin: 0;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <strong>A1 Poster Preview</strong>
+        <a href="poster_a1.svg" download>Download SVG</a>
+        <button type="button" onclick="window.print()">Print / Save as PDF</button>
+        <span>Import the SVG into Figma for final editing and logo replacement.</span>
+    </div>
+    <main class="stage">
+        <img src="poster_a1.svg" alt="A1 poster for AI-Based Learning Style Report">
+    </main>
+</body>
+</html>

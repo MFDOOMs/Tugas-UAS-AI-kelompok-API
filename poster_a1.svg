@@ -1,0 +1,266 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="594mm" height="841mm" viewBox="0 0 594 841">
+  <defs>
+    <style>
+      .bg { fill: #f6f8fb; }
+      .navy { fill: #0f2a43; }
+      .teal { fill: #0f8b8d; }
+      .green { fill: #2f9e44; }
+      .amber { fill: #c47f18; }
+      .panel { fill: #ffffff; stroke: #d9e1ea; stroke-width: 0.8; }
+      .soft { fill: #eef9f7; stroke: #cde3df; stroke-width: 0.8; }
+      .warn { fill: #fff8ec; stroke: #ead4ad; stroke-width: 0.8; }
+      .title { font: 700 21px Arial, Helvetica, sans-serif; fill: #ffffff; }
+      .subtitle { font: 400 7px Arial, Helvetica, sans-serif; fill: #e9f4f4; }
+      .author { font: 700 6px Arial, Helvetica, sans-serif; fill: #ffffff; }
+      .label { font: 700 4.4px Arial, Helvetica, sans-serif; fill: #0f8b8d; letter-spacing: 0.4px; }
+      .h2 { font: 700 8px Arial, Helvetica, sans-serif; fill: #0f2a43; }
+      .h3 { font: 700 5.6px Arial, Helvetica, sans-serif; fill: #17202a; }
+      .body { font: 400 4.6px Arial, Helvetica, sans-serif; fill: #2d3844; }
+      .small { font: 400 3.7px Arial, Helvetica, sans-serif; fill: #637083; }
+      .tiny { font: 400 3.2px Arial, Helvetica, sans-serif; fill: #637083; }
+      .metric { font: 700 13px Arial, Helvetica, sans-serif; fill: #0f2a43; }
+      .metricLabel { font: 700 4px Arial, Helvetica, sans-serif; fill: #637083; }
+      .whiteSmall { font: 700 4px Arial, Helvetica, sans-serif; fill: #ffffff; }
+      .whiteTiny { font: 400 3.4px Arial, Helvetica, sans-serif; fill: #d6eeee; }
+      .mono { font: 400 3.7px Consolas, monospace; fill: #17202a; }
+      .arrow { stroke: #0f8b8d; stroke-width: 1.2; fill: none; marker-end: url(#arrowhead); }
+      .diagramBox { fill: #ffffff; stroke: #0f8b8d; stroke-width: 0.8; }
+      .diagramModel { fill: #e9f8f6; stroke: #0f8b8d; stroke-width: 1; }
+    </style>
+    <marker id="arrowhead" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <polygon points="0 0, 7 3.5, 0 7" fill="#0f8b8d"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="594" height="841"/>
+
+  <!-- Header -->
+  <rect class="navy" x="24" y="22" width="546" height="92" rx="6"/>
+  <circle cx="63" cy="68" r="28" fill="#ffffff" opacity="0.98"/>
+  <circle cx="63" cy="68" r="22" fill="#f5d76e" stroke="#0f2a43" stroke-width="1.2"/>
+  <text x="63" y="66" text-anchor="middle" font-family="Arial" font-size="10" font-weight="700" fill="#0f2a43">UNPAD</text>
+  <text x="63" y="74" text-anchor="middle" font-family="Arial" font-size="4.5" font-weight="700" fill="#0f2a43">LOGO</text>
+  <text x="105" y="51" class="title">AI-Based Learning Style Report</text>
+  <text x="105" y="72" class="title" font-size="16">VAK Questionnaire System</text>
+  <text x="105" y="88" class="subtitle">Machine Learning-based questionnaire system for predicting student learning styles and providing downloadable profile reports.</text>
+  <text x="105" y="102" class="author">Abraham Gomes Samosir • Tristan Bonardo Silalahi • Newten Putra Santoso</text>
+  <text x="105" y="110" class="whiteTiny">Program Studi Teknik Informatika, Universitas Padjadjaran (UNPAD)</text>
+  <rect x="458" y="40" width="88" height="22" rx="11" fill="#0f8b8d"/>
+  <text x="502" y="54" text-anchor="middle" class="whiteSmall">AI COURSE PROJECT</text>
+
+  <!-- Column positions -->
+  <!-- x1=24, x2=210, x3=396, width=174 -->
+
+  <!-- Column 1 -->
+  <rect class="panel" x="24" y="130" width="174" height="106" rx="5"/>
+  <text x="36" y="148" class="label">ABSTRACT</text>
+  <text x="36" y="163" class="body">
+    <tspan x="36" dy="0">This project develops an AI-based learning style report</tspan>
+    <tspan x="36" dy="6.2">system using a VAK questionnaire approach. Student</tspan>
+    <tspan x="36" dy="6.2">responses are converted into Visual, Auditory, and</tspan>
+    <tspan x="36" dy="6.2">Kinesthetic average scores, then classified with a</tspan>
+    <tspan x="36" dy="6.2">trained Machine Learning model. A FastAPI backend</tspan>
+    <tspan x="36" dy="6.2">serves predictions, while the frontend displays score</tspan>
+    <tspan x="36" dy="6.2">breakdown, confidence, and a matching downloadable</tspan>
+    <tspan x="36" dy="6.2">profile PDF. The system supports learning reflection,</tspan>
+    <tspan x="36" dy="6.2">not fixed psychological labeling.</tspan>
+  </text>
+
+  <rect class="panel" x="24" y="248" width="174" height="126" rx="5"/>
+  <text x="36" y="266" class="label">INTRODUCTION</text>
+  <text x="36" y="281" class="body">
+    <tspan x="36" dy="0">Students differ in how they process learning materials.</tspan>
+    <tspan x="36" dy="6.2">Some respond better to visual and reading-based</tspan>
+    <tspan x="36" dy="6.2">resources, others benefit from verbal explanation and</tspan>
+    <tspan x="36" dy="6.2">discussion, while others learn through practice and</tspan>
+    <tspan x="36" dy="6.2">hands-on activities.</tspan>
+    <tspan x="36" dy="10">The VAK framework provides a simple classification of</tspan>
+    <tspan x="36" dy="6.2">learning tendencies into Visual, Auditory, and Kinesthetic</tspan>
+    <tspan x="36" dy="6.2">preferences. This project builds a web-based system that</tspan>
+    <tspan x="36" dy="6.2">uses questionnaire responses and Machine Learning to</tspan>
+    <tspan x="36" dy="6.2">produce interpretable learning style reports.</tspan>
+  </text>
+
+  <rect class="panel" x="24" y="386" width="174" height="178" rx="5"/>
+  <text x="36" y="404" class="label">MATERIALS</text>
+  <text x="36" y="420" class="h3">Dataset and Question Mapping</text>
+  <text x="36" y="432" class="body">
+    <tspan x="36" dy="0">• VAK questionnaire dataset with 15 questions</tspan>
+    <tspan x="36" dy="6.2">• Target label: Learner</tspan>
+    <tspan x="36" dy="6.2">• Q1-Q5: Visual / Reading tendency</tspan>
+    <tspan x="36" dy="6.2">• Q6-Q10: Auditory tendency</tspan>
+    <tspan x="36" dy="6.2">• Q11-Q15: Kinesthetic tendency</tspan>
+  </text>
+  <text x="36" y="476" class="h3">Technology Stack</text>
+  <text x="36" y="488" class="body">
+    <tspan x="36" dy="0">• Frontend: HTML, CSS, Vanilla JavaScript</tspan>
+    <tspan x="36" dy="6.2">• Backend: FastAPI</tspan>
+    <tspan x="36" dy="6.2">• Modeling: Python, pandas, scikit-learn, joblib</tspan>
+    <tspan x="36" dy="6.2">• Model file: models/model_gaya_belajar.pkl</tspan>
+    <tspan x="36" dy="6.2">• Output: Visual, Auditory, Kinesthetic profile PDFs</tspan>
+  </text>
+  <rect x="36" y="526" width="138" height="22" rx="4" fill="#eef9f7"/>
+  <text x="105" y="540" text-anchor="middle" class="h3">15 Questions → 3 Features → 1 Profile Report</text>
+
+  <rect class="warn" x="24" y="576" width="174" height="82" rx="5"/>
+  <text x="36" y="594" class="label" fill="#c47f18">STUDY SCOPE</text>
+  <text x="36" y="609" class="body">
+    <tspan x="36" dy="0">This system is designed as an educational technology</tspan>
+    <tspan x="36" dy="6.2">prototype for an Artificial Intelligence course project.</tspan>
+    <tspan x="36" dy="6.2">Its primary function is to demonstrate dataset-driven</tspan>
+    <tspan x="36" dy="6.2">classification and responsible reporting of learning</tspan>
+    <tspan x="36" dy="6.2">preference predictions.</tspan>
+  </text>
+
+  <!-- Column 2 -->
+  <rect class="panel" x="210" y="130" width="174" height="170" rx="5"/>
+  <text x="222" y="148" class="label">METHODOLOGY</text>
+  <text x="222" y="164" class="h3">1. Data Preparation</text>
+  <text x="222" y="176" class="body">
+    <tspan x="222" dy="0">Load dataset, rename question columns into Q1-Q15,</tspan>
+    <tspan x="222" dy="6.2">remove duplicates, validate labels, and ensure scores</tspan>
+    <tspan x="222" dy="6.2">are numeric within the 1-5 range.</tspan>
+  </text>
+  <text x="222" y="203" class="h3">2. Feature Engineering</text>
+  <text x="222" y="215" class="body">
+    <tspan x="222" dy="0">Calculate Visual, Auditory, and Kinesthetic average</tspan>
+    <tspan x="222" dy="6.2">scores. These features match the web API payload.</tspan>
+  </text>
+  <rect x="222" y="234" width="138" height="30" rx="4" fill="#f6f8fb" stroke="#d9e1ea"/>
+  <text x="230" y="246" class="mono">{ "visual": 4.2, "auditory": 3.1,</text>
+  <text x="230" y="256" class="mono">  "kinesthetic": 2.4 }</text>
+  <text x="222" y="282" class="h3">3. Model Training and Export</text>
+  <text x="222" y="294" class="body">Compare Logistic Regression and Random Forest, then export the best model as a .pkl file.</text>
+
+  <rect class="panel" x="210" y="312" width="174" height="194" rx="5"/>
+  <text x="222" y="330" class="label">ARCHITECTURE DIAGRAM</text>
+  <rect class="diagramBox" x="222" y="344" width="58" height="24" rx="4"/>
+  <text x="251" y="354" text-anchor="middle" class="small">Student fills</text>
+  <text x="251" y="361" text-anchor="middle" class="small">15 VAK items</text>
+  <line class="arrow" x1="280" y1="356" x2="303" y2="356"/>
+  <rect class="diagramBox" x="305" y="344" width="58" height="24" rx="4"/>
+  <text x="334" y="354" text-anchor="middle" class="small">Frontend</text>
+  <text x="334" y="361" text-anchor="middle" class="small">HTML/CSS/JS</text>
+
+  <line class="arrow" x1="334" y1="368" x2="334" y2="390"/>
+  <rect class="diagramBox" x="305" y="391" width="58" height="27" rx="4"/>
+  <text x="334" y="402" text-anchor="middle" class="small">Feature</text>
+  <text x="334" y="409" text-anchor="middle" class="small">Engineering</text>
+
+  <line class="arrow" x1="305" y1="405" x2="280" y2="405"/>
+  <rect class="diagramBox" x="222" y="391" width="58" height="27" rx="4"/>
+  <text x="251" y="402" text-anchor="middle" class="small">JSON Payload</text>
+  <text x="251" y="409" text-anchor="middle" class="small">V/A/K scores</text>
+
+  <line class="arrow" x1="251" y1="418" x2="251" y2="441"/>
+  <rect class="diagramBox" x="222" y="443" width="58" height="27" rx="4"/>
+  <text x="251" y="454" text-anchor="middle" class="small">FastAPI</text>
+  <text x="251" y="461" text-anchor="middle" class="small">/predict</text>
+
+  <line class="arrow" x1="280" y1="456" x2="303" y2="456"/>
+  <rect class="diagramModel" x="305" y="443" width="58" height="27" rx="4"/>
+  <text x="334" y="454" text-anchor="middle" class="small">Random Forest</text>
+  <text x="334" y="461" text-anchor="middle" class="small">.pkl model</text>
+
+  <line class="arrow" x1="334" y1="470" x2="334" y2="488"/>
+  <rect class="diagramBox" x="271" y="488" width="80" height="24" rx="4"/>
+  <text x="311" y="498" text-anchor="middle" class="small">Prediction + PDF</text>
+  <text x="311" y="505" text-anchor="middle" class="small">Profile Output</text>
+
+  <rect class="panel" x="210" y="518" width="174" height="140" rx="5"/>
+  <text x="222" y="536" class="label">ALGORITHM EFFECTIVENESS</text>
+  <rect class="soft" x="222" y="550" width="65" height="42" rx="5"/>
+  <text x="254.5" y="570" text-anchor="middle" class="metric">97.18%</text>
+  <text x="254.5" y="584" text-anchor="middle" class="metricLabel">TEST ACCURACY</text>
+  <rect class="soft" x="299" y="550" width="65" height="42" rx="5"/>
+  <text x="331.5" y="570" text-anchor="middle" class="metric">95.17%</text>
+  <text x="331.5" y="584" text-anchor="middle" class="metricLabel">CV ACCURACY</text>
+  <text x="222" y="612" class="body">
+    <tspan x="222" dy="0">Selected model: Random Forest</tspan>
+    <tspan x="222" dy="6.2">Input features: Visual, Auditory, Kinesthetic averages</tspan>
+    <tspan x="222" dy="6.2">Output classes: Visual, Auditory, Kinesthetic</tspan>
+  </text>
+  <rect x="222" y="636" width="142" height="8" rx="4" fill="#e8edf3"/>
+  <rect x="222" y="636" width="138" height="8" rx="4" fill="#2f9e44"/>
+  <text x="222" y="653" class="tiny">Model evaluated using stratified train-test split and cross-validation.</text>
+
+  <!-- Column 3 -->
+  <rect class="panel" x="396" y="130" width="174" height="138" rx="5"/>
+  <text x="408" y="148" class="label">RESULT</text>
+  <text x="408" y="164" class="body">
+    <tspan x="408" dy="0">The web application integrates questionnaire input, feature</tspan>
+    <tspan x="408" dy="6.2">engineering, model prediction, probability breakdown, score</tspan>
+    <tspan x="408" dy="6.2">visualization, and downloadable profile PDFs.</tspan>
+  </text>
+  <text x="408" y="196" class="h3">Result page includes:</text>
+  <text x="408" y="209" class="body">
+    <tspan x="408" dy="0">• Predicted learning style</tspan>
+    <tspan x="408" dy="6.2">• Model confidence and probability output</tspan>
+    <tspan x="408" dy="6.2">• VAK score visualization</tspan>
+    <tspan x="408" dy="6.2">• Learning strategy interpretation</tspan>
+    <tspan x="408" dy="6.2">• Matching profile PDF download</tspan>
+  </text>
+
+  <rect class="panel" x="396" y="280" width="174" height="190" rx="5"/>
+  <text x="408" y="298" class="label">ETHICAL RESPONSIBILITY</text>
+  <text x="408" y="314" class="body">
+    <tspan x="408" dy="0">This system must be presented as a learning support tool,</tspan>
+    <tspan x="408" dy="6.2">not a deterministic psychological assessment.</tspan>
+  </text>
+  <text x="408" y="338" class="h3">Key considerations</text>
+  <text x="408" y="351" class="body">
+    <tspan x="408" dy="0">1. Avoid fixed labeling: results are learning preferences.</tspan>
+    <tspan x="408" dy="6.2">2. Transparency: explain model features and prediction flow.</tspan>
+    <tspan x="408" dy="6.2">3. Dataset limits: accuracy depends on training data quality.</tspan>
+    <tspan x="408" dy="6.2">4. Bias awareness: avoid demographic prediction features.</tspan>
+    <tspan x="408" dy="6.2">5. User autonomy: encourage flexible learning strategies.</tspan>
+    <tspan x="408" dy="6.2">6. Privacy: avoid collecting sensitive personal data.</tspan>
+  </text>
+  <rect class="warn" x="408" y="407" width="138" height="45" rx="4"/>
+  <text x="417" y="422" class="body">
+    <tspan x="417" dy="0">"The result supports student reflection</tspan>
+    <tspan x="417" dy="6.2">and study planning. It should not be used</tspan>
+    <tspan x="417" dy="6.2">to restrict learning opportunities."</tspan>
+  </text>
+
+  <rect class="panel" x="396" y="482" width="174" height="88" rx="5"/>
+  <text x="408" y="500" class="label">CONCLUSION</text>
+  <text x="408" y="516" class="body">
+    <tspan x="408" dy="0">The project demonstrates that a lightweight web</tspan>
+    <tspan x="408" dy="6.2">application can integrate VAK questionnaire input,</tspan>
+    <tspan x="408" dy="6.2">Machine Learning prediction, and downloadable learning</tspan>
+    <tspan x="408" dy="6.2">profile reports. The Random Forest model achieved</tspan>
+    <tspan x="408" dy="6.2">strong evaluation results using three engineered scores.</tspan>
+  </text>
+
+  <rect class="panel" x="396" y="582" width="174" height="94" rx="5"/>
+  <text x="408" y="600" class="label">RECOMMENDATION</text>
+  <text x="408" y="616" class="body">
+    <tspan x="408" dy="0">• Validate with broader and more diverse student groups.</tspan>
+    <tspan x="408" dy="6.2">• Add precision, recall, F1-score, and confusion matrix.</tspan>
+    <tspan x="408" dy="6.2">• Conduct user testing on profile usefulness.</tspan>
+    <tspan x="408" dy="6.2">• Add privacy handling for online deployment.</tspan>
+    <tspan x="408" dy="6.2">• Monitor model performance when new data is added.</tspan>
+  </text>
+
+  <rect class="panel" x="24" y="670" width="360" height="75" rx="5"/>
+  <text x="36" y="688" class="label">ACKNOWLEDGMENT</text>
+  <text x="36" y="704" class="body">
+    <tspan x="36" dy="0">The authors thank Universitas Padjadjaran and the Artificial Intelligence course environment that supported</tspan>
+    <tspan x="36" dy="6.2">the development of this project. This work was developed by Abraham Gomes Samosir, Tristan Bonardo</tspan>
+    <tspan x="36" dy="6.2">Silalahi, and Newten Putra Santoso as part of an academic project exploring Machine Learning integration</tspan>
+    <tspan x="36" dy="6.2">in educational technology.</tspan>
+  </text>
+
+  <rect class="panel" x="396" y="688" width="174" height="57" rx="5"/>
+  <text x="408" y="706" class="label">SCAN REPOSITORY</text>
+  <rect x="408" y="714" width="24" height="24" fill="#ffffff" stroke="#d9e1ea"/>
+  <image x="408" y="714" width="24" height="24" href="https://api.qrserver.com/v1/create-qr-code/?size=240x240&amp;data=https%3A%2F%2Fgithub.com%2FMFDOOMs%2FTugas-UAS-AI-kelompok-API"/>
+  <text x="440" y="723" class="body">Scan to access the GitHub repository</text>
+  <text x="440" y="735" class="tiny">github.com/MFDOOMs/Tugas-UAS-AI-kelompok-API</text>
+
+  <!-- Footer -->
+  <rect class="navy" x="24" y="765" width="546" height="38" rx="5"/>
+  <text x="36" y="785" class="whiteSmall">AI-Based Learning Style Report: VAK Questionnaire System</text>
+  <text x="36" y="795" class="whiteTiny">Program Studi Teknik Informatika • Universitas Padjadjaran (UNPAD) • Repository: https://github.com/MFDOOMs/Tugas-UAS-AI-kelompok-API</text>
+</svg>

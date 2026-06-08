@@ -1,5 +1,7 @@
 import pickle
+from collections import Counter
 from pathlib import Path
+from statistics import pstdev
 from typing import Any
 
 import joblib
@@ -48,6 +50,10 @@ class ScorePayload(BaseModel):
     visual: float = Field(..., ge=0, description="Average Visual score")
     auditory: float = Field(..., ge=0, description="Average Auditory score")
     kinesthetic: float = Field(..., ge=0, description="Average Kinesthetic score")
+    answers: dict[str, int] | None = Field(
+        default=None,
+        description="Optional raw questionnaire answers keyed by question id, e.g. q1..q15.",
+    )
 
 
 def load_model() -> Any | None:
@@ -70,9 +76,11 @@ def load_model() -> Any | None:
 
 
 def score_dict(scores: ScorePayload) -> dict[str, float]:
-    if hasattr(scores, "model_dump"):
-        return scores.model_dump()
-    return scores.dict()
+    return {
+        "visual": scores.visual,
+        "auditory": scores.auditory,
+        "kinesthetic": scores.kinesthetic,
+    }
 
 
 def normalize_prediction(raw_prediction: Any) -> str:
@@ -109,6 +117,77 @@ def fallback_prediction(scores: ScorePayload) -> str:
     return max(score_map, key=score_map.get)
 
 
+def dominant_score(scores: ScorePayload) -> tuple[str, float, float]:
+    score_map = {
+        "Visual": scores.visual,
+        "Auditory": scores.auditory,
+        "Kinesthetic": scores.kinesthetic,
+    }
+    ranked_scores = sorted(score_map.items(), key=lambda item: item[1], reverse=True)
+    top_label, top_score = ranked_scores[0]
+    second_score = ranked_scores[1][1]
+    return top_label, top_score, second_score
+
+
+def inconclusive_response(scores: ScorePayload, reasons: list[str]) -> dict[str, Any]:
+    return {
+        "prediction": "Inconclusive",
+        "scores": score_dict(scores),
+        "source": "validation_layer",
+        "profile_pdf_url": None,
+        "anomalies": reasons,
+        "message": "The response pattern is not reliable enough for a learning style prediction. Please retake the questionnaire with more varied and reflective answers.",
+    }
+
+
+def detect_pre_prediction_anomalies(scores: ScorePayload) -> list[str]:
+    reasons = []
+    top_label, top_score, second_score = dominant_score(scores)
+
+    if top_score - second_score < 0.35:
+        reasons.append(
+            "The Visual, Auditory, and Kinesthetic scores are too close to show a clear preference."
+        )
+
+    if scores.answers:
+        answer_values = list(scores.answers.values())
+
+        if any(value < 1 or value > 5 for value in answer_values):
+            reasons.append("One or more questionnaire answers are outside the valid 1-5 range.")
+
+        if len(answer_values) >= 15:
+            answer_counts = Counter(answer_values)
+            most_common_count = answer_counts.most_common(1)[0][1]
+
+            if len(set(answer_values)) == 1:
+                reasons.append("All questionnaire answers use the same value, which suggests straight-line answering.")
+            elif most_common_count >= 13:
+                reasons.append("Most questionnaire answers use the same value, which suggests a low-effort response pattern.")
+            elif pstdev(answer_values) < 0.45:
+                reasons.append("The answer variation is very low, so the response pattern may not be meaningful.")
+
+    return reasons
+
+
+def detect_prediction_conflict(scores: ScorePayload, prediction: str) -> list[str]:
+    top_label, top_score, _ = dominant_score(scores)
+    predicted_score = {
+        "Visual": scores.visual,
+        "Auditory": scores.auditory,
+        "Kinesthetic": scores.kinesthetic,
+    }.get(prediction)
+
+    if predicted_score is None:
+        return []
+
+    if prediction != top_label and top_score - predicted_score >= 1.0:
+        return [
+            f"The model predicted {prediction}, but the strongest score pattern is {top_label} by a large margin."
+        ]
+
+    return []
+
+
 def profile_pdf_url(prediction: str) -> str | None:
     if prediction not in PROFILE_PDFS:
         return None
@@ -139,6 +218,10 @@ def download_profile_pdf(learning_style: str) -> FileResponse:
 def predict_learning_style(scores: ScorePayload) -> dict[str, Any]:
     model = load_model()
     input_values = [[scores.visual, scores.auditory, scores.kinesthetic]]
+    pre_prediction_anomalies = detect_pre_prediction_anomalies(scores)
+
+    if pre_prediction_anomalies:
+        return inconclusive_response(scores, pre_prediction_anomalies)
 
     if model is None:
         prediction = fallback_prediction(scores)
@@ -154,6 +237,10 @@ def predict_learning_style(scores: ScorePayload) -> dict[str, Any]:
         raw_prediction = model.predict(input_values)
 
         prediction = normalize_prediction(raw_prediction)
+        prediction_conflicts = detect_prediction_conflict(scores, prediction)
+        if prediction_conflicts:
+            return inconclusive_response(scores, prediction_conflicts)
+
         response = {
             "prediction": prediction,
             "scores": score_dict(scores),

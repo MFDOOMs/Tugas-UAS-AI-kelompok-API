@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI-Based Learning Style Report</title>
     <link rel="stylesheet" href="/static/style.css">
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script defer src="/static/script.js"></script>
 </head>
 <body>
@@ -33,6 +32,35 @@
                 <h2>Answer each statement based on your usual learning habits.</h2>
             </div>
             <p>Select a score from 1 to 5 for each statement. Your responses are converted into model features and sent to the FastAPI backend for learning style prediction.</p>
+        </section>
+
+        <section class="workflow-panel" aria-label="How this website works">
+            <div class="workflow-heading">
+                <p class="section-label">How This Website Works</p>
+                <h2>From questionnaire answers to a learning profile.</h2>
+            </div>
+            <div class="workflow-steps">
+                <article>
+                    <span>1</span>
+                    <strong>Answer the questionnaire</strong>
+                    <p>Students respond to 15 VAK-based statements using a 1-5 agreement scale.</p>
+                </article>
+                <article>
+                    <span>2</span>
+                    <strong>Calculate learning scores</strong>
+                    <p>The website calculates Visual, Auditory, and Kinesthetic average scores from the answers.</p>
+                </article>
+                <article>
+                    <span>3</span>
+                    <strong>Validate the response pattern</strong>
+                    <p>The system checks for unclear or anomalous answers, such as repeated values or conflicting score patterns.</p>
+                </article>
+                <article>
+                    <span>4</span>
+                    <strong>Predict and download</strong>
+                    <p>Valid scores are sent to the ML model, then the matching learning profile PDF becomes available.</p>
+                </article>
+            </div>
         </section>
 
         <form id="quizForm" class="quiz-grid">
@@ -158,7 +186,6 @@
             </div>
 
             <div class="result-actions">
-                <button id="downloadBtn" class="btn secondary" type="button">Download Summary Report (PDF)</button>
                 <a id="profilePdfBtn" class="btn primary profile-link" href="#" download>Download Learning Profile PDF</a>
             </div>
         </section>

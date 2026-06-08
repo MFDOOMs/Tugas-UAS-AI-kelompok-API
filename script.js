@@ -5,7 +5,6 @@ const predictionDescription = document.querySelector("#predictionDescription");
 const recommendationText = document.querySelector("#recommendationText");
 const sourceBadge = document.querySelector("#sourceBadge");
 const statusText = document.querySelector("#statusText");
-const downloadBtn = document.querySelector("#downloadBtn");
 const profilePdfBtn = document.querySelector("#profilePdfBtn");
 
 const scoreFields = {
@@ -30,12 +29,14 @@ const descriptions = {
     Visual: "Your responses indicate a stronger tendency toward visual and reading-based learning, where written material, diagrams, and visible structure support understanding.",
     Auditory: "Your responses indicate a stronger tendency toward auditory learning, where spoken explanation, listening, and discussion support understanding.",
     Kinesthetic: "Your responses indicate a stronger tendency toward kinesthetic learning, where direct practice, experiments, movement, and hands-on activities support understanding.",
+    Inconclusive: "Your response pattern does not show a reliable learning preference. This can happen when answers are too uniform, too ambiguous, or strongly conflict with the model prediction.",
 };
 
 const recommendations = {
     Visual: "Use structured notes, diagrams, mind maps, reading summaries, highlighted keywords, and visual organizers to make information easier to scan and remember.",
     Auditory: "Use discussion, verbal explanation, recorded summaries, lecture-based material, and teach-back sessions to strengthen recall and understanding.",
     Kinesthetic: "Use practice tasks, experiments, simulations, role-playing, case studies, and project-based activities to make concepts more concrete.",
+    Inconclusive: "Please retake the questionnaire with more varied and reflective answers. Choose each score based on the statement itself, not by repeating the same value across all questions.",
 };
 
 document.querySelectorAll(".scale").forEach((scale) => {
@@ -80,6 +81,19 @@ function collectScores() {
     };
 }
 
+function collectAnswers() {
+    const answers = {};
+
+    document.querySelectorAll(".scale").forEach((scale) => {
+        const checked = scale.querySelector("input:checked");
+        if (!checked) return;
+
+        answers[scale.dataset.question] = Number(checked.value);
+    });
+
+    return answers;
+}
+
 function setLoading(isLoading) {
     const submitButton = form.querySelector("button[type='submit']");
     submitButton.disabled = isLoading;
@@ -101,10 +115,21 @@ function renderResult(data) {
     sourceBadge.textContent = data.source === "machine_learning_model" ? "ML Model" : "Fallback";
     sourceBadge.style.background = data.source === "machine_learning_model" ? "#2f9e44" : "#c47f18";
 
-    const profileUrl = data.profile_pdf_url || `/profile-pdf/${prediction.toLowerCase()}`;
-    profilePdfBtn.href = profileUrl;
-    profilePdfBtn.download = `${prediction} Profile.pdf`;
-    profilePdfBtn.textContent = `Download ${prediction} Profile PDF`;
+    if (prediction === "Inconclusive" || !data.profile_pdf_url) {
+        sourceBadge.textContent = "Validation";
+        sourceBadge.style.background = "#c47f18";
+        profilePdfBtn.classList.add("hidden");
+
+        if (data.anomalies && data.anomalies.length > 0) {
+            recommendationText.textContent = `${recommendationText.textContent} Reason: ${data.anomalies.join(" ")}`;
+        }
+    } else {
+        const profileUrl = data.profile_pdf_url;
+        profilePdfBtn.href = profileUrl;
+        profilePdfBtn.download = `${prediction} Profile.pdf`;
+        profilePdfBtn.textContent = `Download ${prediction} Profile PDF`;
+        profilePdfBtn.classList.remove("hidden");
+    }
 
     resultSection.classList.remove("hidden");
     resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -117,12 +142,13 @@ form.addEventListener("submit", async (event) => {
 
     try {
         const scores = collectScores();
+        const answers = collectAnswers();
         const response = await fetch(apiUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(scores),
+            body: JSON.stringify({ ...scores, answers }),
         });
 
         const data = await response.json();
@@ -148,24 +174,4 @@ form.addEventListener("submit", async (event) => {
 form.addEventListener("reset", () => {
     resultSection.classList.add("hidden");
     statusText.textContent = "";
-});
-
-downloadBtn.addEventListener("click", () => {
-    const report = document.querySelector("#reportContent");
-    const filename = `learning-style-report-${Date.now()}.pdf`;
-
-    if (!window.html2pdf) {
-        window.print();
-        return;
-    }
-
-    const options = {
-        margin: 10,
-        filename,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    };
-
-    window.html2pdf().set(options).from(report).save();
 });
