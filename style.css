@@ -139,6 +139,42 @@ h1 {
     line-height: 1.6;
 }
 
+.method-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.method-card {
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+}
+
+.method-card span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--teal);
+    font-size: 0.76rem;
+    font-weight: 850;
+    text-transform: uppercase;
+}
+
+.method-card strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--navy);
+}
+
+.method-card p {
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
 .quiz-grid {
     display: grid;
     gap: 20px;
@@ -308,6 +344,39 @@ h1 {
     line-height: 1.7;
 }
 
+.confidence-panel {
+    display: grid;
+    grid-template-columns: minmax(190px, 0.42fr) 1fr;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 16px;
+    border: 1px solid #cde3df;
+    border-radius: 8px;
+    background: #eef9f7;
+}
+
+.confidence-panel span {
+    display: block;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.confidence-panel strong {
+    display: block;
+    margin-top: 4px;
+    color: var(--navy);
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.confidence-panel p {
+    margin-bottom: 0;
+    color: #355b5c;
+    line-height: 1.55;
+}
+
 .score-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -335,6 +404,64 @@ h1 {
     font-size: 1.8rem;
 }
 
+.score-bar {
+    height: 8px;
+    margin-top: 12px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e5ecf2;
+}
+
+.score-bar i {
+    display: block;
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--teal);
+    transition: width 280ms ease;
+}
+
+.probability-panel {
+    margin-top: 16px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fbfcfe;
+}
+
+.probability-panel h3,
+.interpretation-grid h3,
+.model-note h3 {
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+
+.probability-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.probability-list div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+}
+
+.probability-list span {
+    color: var(--muted);
+    font-weight: 750;
+}
+
+.probability-list strong {
+    color: var(--navy);
+}
+
 .recommendation {
     margin-top: 18px;
     padding: 18px;
@@ -347,6 +474,42 @@ h1 {
 }
 
 .recommendation p {
+    margin-bottom: 0;
+    color: #5d4b2b;
+    line-height: 1.65;
+}
+
+.interpretation-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.interpretation-grid section,
+.model-note {
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fbfcfe;
+}
+
+.interpretation-grid ul {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding-left: 18px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.model-note {
+    margin-top: 18px;
+    border-color: #d7d3c4;
+    background: #fffaf0;
+}
+
+.model-note p {
     margin-bottom: 0;
     color: #5d4b2b;
     line-height: 1.65;
@@ -383,7 +546,8 @@ h1 {
 
 @media (max-width: 780px) {
     .header-inner,
-    .intro-panel {
+    .intro-panel,
+    .confidence-panel {
         grid-template-columns: 1fr;
     }
 
@@ -400,7 +564,10 @@ h1 {
     }
 
     .scale,
-    .score-grid {
+    .score-grid,
+    .method-grid,
+    .probability-list,
+    .interpretation-grid {
         grid-template-columns: 1fr;
     }
 
