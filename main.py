@@ -1,3 +1,4 @@
+import json
 import pickle
 from pathlib import Path
 from typing import Any
@@ -12,6 +13,7 @@ from pydantic import BaseModel, Field
 
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_PATH = BASE_DIR / "models" / "model_gaya_belajar.pkl"
+MODEL_METADATA_PATH = BASE_DIR / "models" / "model_metadata.json"
 PROFILE_PDFS = {
     "Visual": BASE_DIR / "profile_pdfs" / "visual-profile.pdf",
     "Auditory": BASE_DIR / "profile_pdfs" / "auditory-profile.pdf",
@@ -42,6 +44,7 @@ app.mount("/static", StaticFiles(directory=BASE_DIR), name="static")
 
 _model: Any | None = None
 _model_loaded_from: Path | None = None
+_model_metadata: dict[str, Any] | None = None
 
 
 class ScorePayload(BaseModel):
@@ -71,6 +74,19 @@ def load_model() -> Any | None:
         _model_loaded_from = MODEL_PATH
 
     return _model
+
+
+def load_model_metadata() -> dict[str, Any]:
+    global _model_metadata
+
+    if _model_metadata is None:
+        if not MODEL_METADATA_PATH.exists():
+            _model_metadata = {}
+        else:
+            with MODEL_METADATA_PATH.open("r", encoding="utf-8") as metadata_file:
+                _model_metadata = json.load(metadata_file)
+
+    return _model_metadata
 
 
 def score_dict(scores: ScorePayload) -> dict[str, float]:
@@ -177,6 +193,11 @@ def normalize_prediction(raw_prediction: Any) -> str:
 
     if hasattr(value, "item"):
         value = value.item()
+
+    metadata_label_map = load_model_metadata().get("label_map", {})
+    raw_key = str(value).strip()
+    if raw_key in metadata_label_map:
+        return metadata_label_map[raw_key]
 
     label_map = {
         0: "Visual",
